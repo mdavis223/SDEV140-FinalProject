@@ -1,4 +1,10 @@
 
+'''
+Icecream Ordering Program
+Author: Marcos Davis
+Date: 5/10/24
+Version 1.0
+'''
 
 
 #imports
@@ -9,13 +15,18 @@ from tkinter import filedialog
 from tkinter import messagebox
 import tkinter as tk
 
+
+#Object for Start Up Window
 class StartUpWindow():
     def __init__(self, master):
         self.master = master
-        rootTitle1 = tk.Label(self.master, text = "Welcome to Kevin's Creamy Confections", font = 'Arial 16 bold')
-        rootTitle2 = tk.Label(self.master, text = "Are You Going to ...", font = 'Arial 15 bold')
-        rootTitle3 = tk.Label(self.master, text = "Or", font = 'Arial 15 bold')
-        rootTitle4 = tk.Label(self.master, text = "Name: ", font = 'Arial 15 bold')
+        #Start up window labels
+        rootTitle1 = tk.Label(self.master, text = "Welcome to Kevin's Creamy Confections", background = 'MediumPurple2', font = ('Kristen ITC', 16, 'bold'))
+        rootTitle2 = tk.Label(self.master, text = "Are You Going to ...", background = 'MediumPurple2', font = ('Kristen ITC', 15, 'bold'))
+        rootTitle3 = tk.Label(self.master, text = "Or", background = 'MediumPurple2', font = ('Kristen ITC', 15, 'bold'))
+        rootTitle4 = tk.Label(self.master, text = "Name: ", background = 'MediumPurple2', font = ('Kristen ITC', 15, 'bold'))
+
+        
 
 #Start-up window widgets
         dineInBtn = ttk.Button(self.master, text = "Dine In", command = self.dineInOption)
@@ -23,6 +34,7 @@ class StartUpWindow():
         username = StringVar()
         global name
         name = tk.Entry(self.master, textvariable = username)
+        quitBtn = ttk.Button(self.master, text = "Quit", command = self.quit)
 
 #Start-up window label and widget placement
         rootTitle1.place(relx = 0.5, rely = 0.4, anchor = CENTER)
@@ -32,7 +44,9 @@ class StartUpWindow():
         dineInBtn.place(relx = 0.4, rely = 0.75, anchor = CENTER)
         pickUpBtn.place(relx = 0.6, rely = 0.75, anchor = CENTER)
         name.place(relx = 0.5, rely = 0.5, anchor = CENTER)
+        quitBtn.place(relx = 0.93, rely = 0.96, anchor = CENTER)
 
+#Mutator and accessor methods for customer name and eating location
     def getCustName(self):
         return self.custName
 
@@ -44,32 +58,35 @@ class StartUpWindow():
 
     def setEatLocation(self, eatLocation):
         self.eatLocation = eatLocation
-
+#Reads inputted text
     def getNameEntry(self):
         return name.get()
-
+#Shows error for empty text
     def missingName(self):
         messagebox.showerror("Error", "Please provide a name for the order.")
-
+#Function for quit button
+    def quit(self):
+        self.master.destroy()
+        
+#Function for dine in button
     def dineInOption (self):
-        if self.getNameEntry() == "":
+        if self.getNameEntry() == "":       #Checks if name input is empty
             self.missingName()
         else:
-            self.eatLocation = "Dine In"
+            #Sets customer name and eating location
+            self.eatLocation = "Dine In"        
             self.custName = self.getNameEntry()
             self.setEatLocation(self.eatLocation)
             self.setCustName(self.custName)
-
             custName = self.custName
             eatLocation = self.eatLocation
-        
-        
+            #Close start up window and opens menu window
             self.master.withdraw()
             self.newWindow = tk.Toplevel(self.master)
-            self.app = MenuWindow(self.newWindow, custName, eatLocation)
+            self.app = MenuWindow(self.newWindow, custName, eatLocation)    #Shares startup class data with menu class
 
         
-
+#Function for pick up option, same as dine in
     def pickUpOption (self):
         if self.getNameEntry() == "":
             self.missingName()
@@ -79,66 +96,73 @@ class StartUpWindow():
             self.custName = self.getNameEntry()
             self.setEatLocation(self.eatLocation)
             self.setCustName(self.custName)
-
             custName = self.custName
             eatLocation = self.eatLocation
-
-
         
             self.master.withdraw()
             self.newWindow = tk.Toplevel(self.master)
             self.app = MenuWindow(self.newWindow, custName, eatLocation)
-        
+#Object for menu window        
 class MenuWindow():
     def __init__(self, master, custName, eatLocation):
         self.master = master
         self.custName = custName
         self.eatLocation = eatLocation
-        
+        #Window configuration
         master.title("Menu")
         master.geometry('640x480+650+250')
         master.resizable(False, False)
-        menuTitle1 = tk.Label(self.master, text = "Select Number of Scoops:", font = 'Arial 15 bold')
-        menuTitle2 = tk.Label(self.master, text = "Cone or Sundae:", font = 'Arial 15 bold')
-        menuTitle3 = tk.Label(self.master, text = "Select Toppings:", font = 'Arial 15 bold')
+        master.configure(background = 'MediumPurple2')
+        #Creates menu labels
+        menuTitle1 = tk.Label(self.master, text = "Select Number of Scoops:", background = 'MediumPurple2', font = 'Arial 15 bold')
+        menuTitle2 = tk.Label(self.master, text = "Cone or Sundae:", background = 'MediumPurple2', font = 'Arial 15 bold')
+        menuTitle3 = tk.Label(self.master, text = "Select Toppings:", background = 'MediumPurple2', font = 'Arial 15 bold')
 
 #Menu widgets
+        #Scoop amount
         spinval = tk.IntVar()
         global scoopSpinBox
         scoopSpinBox = tk.Spinbox(self.master, from_ = 1, to = 3, width = 7, textvariable = spinval)
         scoopSpinBox.config(state = "readonly", justify = "center", wrap = True)
+        #Icecream type
         global typeDropList
         typeDropList = ttk.Combobox(self.master, state = 'readonly', values = ["Cone", "Sundae"])
 
+        #Toppings
         nutsValue = tk.BooleanVar()
-        nutsOption = Checkbutton(self.master, text = "Nuts", font = 'Arial 10 bold', variable = nutsValue)
+        nutsOption = Checkbutton(self.master, text = "Nuts", background = 'MediumPurple2', font = 'Arial 10 bold', variable = nutsValue)
         
         chocolateValue = tk.BooleanVar()
-        chocolateOption = Checkbutton(self.master, text = "Chocolate", font = 'Arial 10 bold', variable = chocolateValue)
+        chocolateOption = Checkbutton(self.master, text = "Chocolate", background = 'MediumPurple2', font = 'Arial 10 bold', variable = chocolateValue)
 
         strawberrySyrupValue = tk.BooleanVar()
-        strawberrySyrupOption = Checkbutton(self.master, text = "Strawberry Syrup", font = 'Arial 10 bold', variable = strawberrySyrupValue)
+        strawberrySyrupOption = Checkbutton(self.master, text = "Strawberry Syrup", background = 'MediumPurple2', font = 'Arial 10 bold', variable = strawberrySyrupValue)
         
         pineappleSyrupValue = tk.BooleanVar()
-        pineappleSyrupOption = Checkbutton(self.master, text = "Pineapple Syrup", font = 'Arial 10 bold', variable = pineappleSyrupValue)
+        pineappleSyrupOption = Checkbutton(self.master, text = "Pineapple Syrup", background = 'MediumPurple2', font = 'Arial 10 bold', variable = pineappleSyrupValue)
         
         whipCreamValue = tk.BooleanVar()
-        whipCreamOption = Checkbutton(self.master, text = "Whip Cream", font = 'Arial 10 bold', variable = whipCreamValue)
+        whipCreamOption = Checkbutton(self.master, text = "Whip Cream", background = 'MediumPurple2', font = 'Arial 10 bold', variable = whipCreamValue)
         
         sprinklesValue = tk.BooleanVar()
-        sprinklesOption = Checkbutton(self.master, text = "Sprinkles", font = 'Arial 10 bold', variable = sprinklesValue)
+        sprinklesOption = Checkbutton(self.master, text = "Sprinkles", background = 'MediumPurple2', font = 'Arial 10 bold', variable = sprinklesValue)
         
         sugarCookiesValue = tk.BooleanVar()
-        sugarCookiesOption = Checkbutton(self.master, text = "Sugar Cookies", font = 'Arial 10 bold', variable = sugarCookiesValue)
+        sugarCookiesOption = Checkbutton(self.master, text = "Sugar Cookies", background = 'MediumPurple2', font = 'Arial 10 bold', variable = sugarCookiesValue)
         
         bananasValue = tk.BooleanVar()
-        bananasOption = Checkbutton(self.master, text = "Bananas", font = 'Arial 10 bold', variable = bananasValue)
+        bananasOption = Checkbutton(self.master, text = "Bananas", background = 'MediumPurple2', font = 'Arial 10 bold', variable = bananasValue)
         
         cherryValue = tk.BooleanVar()
-        cherryOption = Checkbutton(self.master, text = "Cherry", font = 'Arial 10 bold', variable = cherryValue)
-        
+        cherryOption = Checkbutton(self.master, text = "Cherry", background = 'MediumPurple2', font = 'Arial 10 bold', variable = cherryValue)
+
+        #Creates order finish button
         addOrderBtn = ttk.Button(self.master, text = "Complete Order", command = self.addCart)
 
+        #Creates quit button
+        quitBtn = ttk.Button(self.master, text = "Quit", command = self.quit)
+
+        #List for all checkbox values
         global toppings
         toppings = [nutsValue, chocolateValue, strawberrySyrupValue, pineappleSyrupValue, whipCreamValue, sprinklesValue, sugarCookiesValue, bananasValue, cherryValue]
 
@@ -158,12 +182,20 @@ class MenuWindow():
         bananasOption.place(relx = 0.35, rely = 0.85, anchor = 'nw')
         cherryOption.place(relx = 0.7, rely = 0.85, anchor = 'nw')
         addOrderBtn.place(relx = 0.83, rely = 0.93, anchor = 'nw')
+        quitBtn.place(relx = 0.01, rely = 0.93, anchor = 'nw')
 
+    #Function for quit button
+    def quit(self):
+        self.master.destroy()
+
+#Gets information from wisgets
     def getScoopAmount(self):
         return scoopSpinBox.get()
 
     def getIcecreamType(self):
         return typeDropList.get()
+
+    #Accessor and mutator methods
 
     def setIcecreamType(self, icecreamType):
         self.icecreamType = icecreamType
@@ -174,12 +206,9 @@ class MenuWindow():
     def getChosenToppings(self):
         return chosenToppings
 
-    def completeOrder(self):
-        order.append(self.icecreamType)                         #Use labels for order and make sure to update dine in option
-        order.append(self.scoopAmount)
-        order.extend(chosenToppings)
 
 
+#Places selected toppings to chosen toppings list
     def getToppings(self):
         toppingCount = 0
         for i, topping in enumerate(toppings):
@@ -187,8 +216,9 @@ class MenuWindow():
                 toppingCount += 1
                 chosenToppings.append(i)
                 self.changeToppingValue()
+                
 
-        
+    #Changes list values to represent topping names    
     def changeToppingValue(self):
         for i in range(len(chosenToppings)):
             if chosenToppings[i] == 0:
@@ -209,48 +239,43 @@ class MenuWindow():
                 chosenToppings[i] = "Bananas"
             if chosenToppings[i] == 8:
                 chosenToppings[i] = "Cherry"
+        
 
+    #Fixes output of chosen topping list
+    def fixToppingList(self):
+        return str(', '.join(chosenToppings))
 
-                
-                
-
-    def getOrder(self):
-        return order
-    
-
-            
+    #Creates a yes or no order confirmation message box        
     def showOrderConfirmation(self):
-        res = messagebox.askquestion("Order Confirmation", f"Would you like to submit your order? \n{self.custName} - {self.eatLocation} \n{self.icecreamType} - {self.scoopAmount} scoop(s) \n {chosenToppings}")
+        res = messagebox.askquestion("Order Confirmation", f"Would you like to submit your order? \n{self.custName} - {self.eatLocation} \n{self.icecreamType} - {self.scoopAmount} scoop(s) \n {self.fixToppingList()}")
         if res == 'yes':
             messagebox.showinfo('Order Complete', 'Your order has been submitted!')
             self.master.destroy()
         else:
             messagebox.showinfo('Return', 'Returning to Order')
 
-    
+    #Shows error if order is not finished
+    def missingIcecreamType(self):
+        messagebox.showerror('Error', 'Please finish your order')
+
+    #Function for finish order button
     def addCart(self):
-        self.scoopAmount = self.getScoopAmount()
-        self.icecreamType = self.getIcecreamType()
-        self.setIcecreamType(self.icecreamType)
-        custName = self.custName
-        eatLocation = self.eatLocation
-        icecreamType = self.icecreamType
-        scoopAmount = self.scoopAmount
-        self.getToppings()
-
-        order = self.completeOrder()
-
-        self.showOrderConfirmation()
-        
-        
-
-    
-       
+        if typeDropList.index("end") == 0:      #checks if order is not finished
+            self.missingIcecreamType()
+        else:
+            self.scoopAmount = self.getScoopAmount()
+            self.icecreamType = self.getIcecreamType()
+            self.setIcecreamType(self.icecreamType)
+            custName = self.custName
+            eatLocation = self.eatLocation
+            icecreamType = self.icecreamType
+            scoopAmount = self.scoopAmount
+            self.getToppings()
+            self.showOrderConfirmation()
         
 
 
 
-order = []
 chosenToppings = []
 
 
@@ -261,6 +286,10 @@ def main():
     root.title("Kevin's Creamy Confections")
     root.geometry('640x480+650+250')
     root.resizable(False, False)
+    root.configure(background = 'MediumPurple2')
+    
 
 if __name__ == "__main__":
     main()
+
+    
